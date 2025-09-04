@@ -1,0 +1,37 @@
+$ terraform plan
+data.external.subgroup_lookup: Reading...
+Planning failed. Terraform encountered an error while generating this plan.
+╷
+│ Error: External Program Lookup Failed
+│ 
+│   with data.external.subgroup_lookup,
+│   on main.tf line 4, in data "external" "subgroup_lookup":
+│    4:   program = ["bash", "${path.module}/check-group.sh"]
+│ 
+│ The data source received an unexpected error while attempting to parse the
+│ query. The data source received an unexpected error while attempting to
+│ find the program.
+│ 
+│ The program must be accessible according to the platform where Terraform is
+│ running.
+│ 
+│ If the expected program should be automatically found on the platform where
+│ Terraform is running, ensure that the program is in an expected directory.
+│ On Unix-based platforms, these directories are typically searched based on
+│ the '$PATH' environment variable. On Windows-based platforms, these
+│ directories are typically searched based on the '%PATH%' environment
+│ variable.
+│ 
+│ If the expected program is relative to the Terraform configuration, it is
+│ recommended that the program name includes the interpolated value of
+│ 'path.module' before the program name to ensure that it is compatible with
+│ varying module usage. For example: "${path.module}/my-program"
+│ 
+│ The program must also be executable according to the platform where
+│ Terraform is running. On Unix-based platforms, the file on the filesystem
+│ must have the executable bit set. On Windows-based platforms, no action is
+│ typically necessary.
+│ 
+│ Platform: linux
+│ Program: "bash"
+│ Error: exec: "bash": executable file not found in $PATH
