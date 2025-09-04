@@ -1,0 +1,38 @@
+heck_subgroup:
+  stage: precheck
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl jq bash
+  script:
+    - chmod +x ./check-group.sh
+    - ./check-group.sh  "chris/devops/gitlab/terraform" "frontend-new-modules"
+    - cat subgroup_status.env
+  artifacts:
+    reports:
+      dotenv: subgroup_status.env
+    expire_in: 1 hour
+
+terraform_plan:
+  stage: plan
+  image:
+    name: hashicorp/terraform:1.8.3
+    entrypoint: [""]
+  dependencies:
+    - check_subgroup
+  before_script:
+    - |
+      # Generate terraform.tfvars file from environment variables
+      cat <<EOF > terraform.tfvars
+      parent_group_path = "${PARENT_GROUP_PATH}"
+      subgroup_name     = "${SUBGROUP_NAME}"
+      create_subgroup   = ${create_subgroup}
+      existing_subgroup_id = "${existing_subgroup_id}"
+      parent_group_id   = "${parent_group_id}"
+      EOF
+
+      echo "Generated terraform.tfvars:"
+      cat terraform.tfvars
+  script:
+    - terraform init
+    - terraform plan -var-file="terraform.tfvars"
+
